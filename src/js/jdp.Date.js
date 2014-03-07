@@ -114,7 +114,7 @@
 
 
 
-
+  // its kinda redundant!
   this.addDay = function (d) {
     this.day += d;
     if (this.day < 1) {

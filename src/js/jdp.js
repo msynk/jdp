@@ -84,35 +84,23 @@ jdp.DatePicker.prototype.renderDaysPanel = function () {
   if (this.panels.days) {
     document.body.removeChild(this.panels.days);
   }
-  this.panels.days = jdp.createDaysPanel(this);
-  this.panels.days.style.top = this.top;
-  this.panels.days.style.left = this.left;
-  document.body.appendChild(this.panels.days);
+  this.panels.days = jdp.panels.createDays(this);
 };
 jdp.DatePicker.prototype.renderMonthsPanel = function () {
   if (this.panels.months) {
     document.body.removeChild(this.panels.months);
   }
-  this.panels.months = jdp.createMonthsPanel(this);
-  this.panels.months.style.top = this.top;
-  this.panels.months.style.left = this.left;
-  document.body.appendChild(this.panels.months);
+  this.panels.months = jdp.panels.createMonths(this);
 };
 jdp.DatePicker.prototype.renderYearsPanel = function () {
   if (this.panels.years) {
     document.body.removeChild(this.panels.years);
   }
-  this.panels.years = jdp.createYearsPanel(this);
-  this.panels.years.style.top = this.top;
-  this.panels.years.style.left = this.left;
-  document.body.appendChild(this.panels.years);
+  this.panels.years = jdp.panels.createYears(this);
 };
 jdp.DatePicker.prototype.renderDecadesPanel = function () {
   if (this.panels.decades) {
     document.body.removeChild(this.panels.decades);
   }
-  this.panels.decades = jdp.createDecadesPanel(this);
-  this.panels.decades.style.top = this.top;
-  this.panels.decades.style.left = this.left;
-  document.body.appendChild(this.panels.decades);
+  this.panels.decades = jdp.panels.createDecades(this);
 };

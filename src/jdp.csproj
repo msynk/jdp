@@ -60,12 +60,9 @@
     <Content Include="js\jdp.Date.js" />
     <Content Include="js\jdp.calendars.js" />
     <Content Include="js\jdp.js" />
-    <Content Include="js\jdp.panel.days.js" />
-    <Content Include="js\jdp.panel.years.js" />
-    <Content Include="js\jdp.panel.decades.js" />
-    <Content Include="js\jdp.panel.months.js" />
     <Content Include="js\jdp.utils.js" />
     <Content Include="js\calendars\jdp.calendars.persian.js" />
+    <Content Include="js\jdp.panels.js" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

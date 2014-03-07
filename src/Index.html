@@ -8,10 +8,7 @@
   <script src="js/jdp.js"></script>
   <script src="js/jdp.Date.js"></script>
   <script src="js/jdp.calendars.js"></script>
-  <script src="js/jdp.panel.days.js"></script>
-  <script src="js/jdp.panel.months.js"></script>
-  <script src="js/jdp.panel.years.js"></script>
-  <script src="js/jdp.panel.decades.js"></script>
+  <script src="js/jdp.panels.js"></script>
   <script src="js/jdp.utils.js"></script>
 
   <script src="js/calendars/jdp.calendars.persian.js"></script>
@@ -23,8 +20,8 @@
   <script>
     //jdp.calendars['persian'].today = @Model.Today;
     jdp.calendars['persian'].today = [1392, 12, 16, 6];
-    //var dd = jdp('dpText', { calendar: 'persian' });
-    var dd = jdp('dpText');
+    var dd = jdp('dpText', { calendar: 'persian' });
+    //var dd = jdp('dpText');
   </script>
 </body>
 </html>
