@@ -63,10 +63,8 @@ jdp.DatePicker = function (t, opt) {
 
 
   (function $Init() {
-    me.panels = {};
-
-    me.calendar = jdp.u.extend({}, jdp.calendars['default']);
     var oCal = me.options.calendar;
+    me.calendar = jdp.u.extend({}, jdp.calendars['default']);
     if (oCal && jdp.calendars[oCal]) {
       me.calendar = jdp.u.extend(me.calendar, jdp.calendars[oCal]);
     }
@@ -78,8 +76,7 @@ jdp.DatePicker = function (t, opt) {
     me.left = me.target.offsetLeft + 'px';
 
     me.setEvents();
-    //me.hide();
-
+    me.panels = {};
   })();
 };
 

@@ -1,22 +1,23 @@
 ﻿jdp.calendars = {
   'default': {
-    code: 'fa-IR',
-    name: 'Persian Calendar',
-    rtl: true,
-    weekDays: ['شن', 'یک', 'دو', 'سه', 'چه', 'پن', 'جم'],
-    months: ['فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور', 'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'],
-    monthDays: [31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29],
+    name: 'gregorian',
+    lang: 'en',
+    title: 'English(Gregorian) Calendar',
+
+    rtl: false,
+    weekDays: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+    months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+    monthDays: [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],
     monthsInRow: 3,
+
     isLeapYear: function (year) {
-      // came from .Net Framework System.Globalization.PersianCalendar class:
-      var leapYears33 = [0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0];
-      return (leapYears33[year % 33] === 1);
+      return (((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0));
     },
     daysInMonth: function (year, month) {
-      if (month === 12 && this.isLeapYear(year)) return 30;
+      if (month === 2 && this.isLeapYear(year)) return 29;
       return this.monthDays[month - 1];
     },
 
-    today: [1392, 12, 7, 4],
+    today: [new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate(), new Date().getDay()],
   }
 };

@@ -65,7 +65,7 @@
     <Content Include="js\jdp.panel.decades.js" />
     <Content Include="js\jdp.panel.months.js" />
     <Content Include="js\jdp.utils.js" />
-    <Content Include="js\jdp.fa-IR.js" />
+    <Content Include="js\calendars\jdp.calendars.persian.js" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
