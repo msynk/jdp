@@ -52,13 +52,13 @@ jdp.DatePicker = function (t, opt) {
     me.setDates();
     me.renderDaysPanel();
     me.hide();
-    me.panels.days.style.display = 'block';
+    me.panels.days.show();
   };
   me.hide = function () {
-    if (me.panels.days) me.panels.days.style.display = 'none';
-    if (me.panels.months) me.panels.months.style.display = 'none';
-    if (me.panels.years) me.panels.years.style.display = 'none';
-    if (me.panels.decades) me.panels.decades.style.display = 'none';
+    if (me.panels.days) me.panels.days.hide();
+    if (me.panels.months) me.panels.months.hide();
+    if (me.panels.years) me.panels.years.hide();
+    if (me.panels.decades) me.panels.decades.hide();
   };
 
 

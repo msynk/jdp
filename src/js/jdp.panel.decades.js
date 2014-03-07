@@ -6,6 +6,15 @@
     d.className += ' jdp-rtl';
   }
   d.appendChild(jdp.decadesPanel.createTable(dp));
+
+  d.show = function () {
+    d.style.display = 'block';
+  };
+
+  d.hide = function () {
+    d.style.display = 'none';
+  };
+
   return d;
 };
 
