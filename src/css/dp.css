@@ -1,0 +1,35 @@
+﻿.jdp {
+  position: absolute;
+  border: solid 2px blue;
+}
+
+  .jdp table tr td {
+    border: dashed 1px black;
+    margin: 1px;
+    cursor: pointer;
+    text-align: center;
+  }
+
+.jdp-rtl {
+  direction: rtl;
+}
+
+.jdp-daysPanel {
+}
+
+  .jdp-daysPanel table {
+  }
+
+    .jdp-daysPanel table tr {
+    }
+
+      .jdp-daysPanel table tr td {
+      }
+
+.jdp-today {
+  background-color: aqua;
+}
+
+.jdp-selected {
+  background-color: pink;
+}

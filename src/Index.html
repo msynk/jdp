@@ -1,0 +1,28 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <title>dp</title>
+  <link href="Contents/css/site.css" rel="stylesheet" />
+  <link href="Contents/css/dp.css" rel="stylesheet" />
+
+  <script src="Contents/js/jdp.js"></script>
+  <script src="Contents/js/jdp.Date.js"></script>
+  <script src="Contents/js/jdp.calendars.js"></script>
+  <script src="Contents/js/jdp.panel.days.js"></script>
+  <script src="Contents/js/jdp.panel.months.js"></script>
+  <script src="Contents/js/jdp.panel.years.js"></script>
+  <script src="Contents/js/jdp.panel.decades.js"></script>
+  <script src="Contents/js/jdp.utils.js"></script>
+
+</head>
+<body>
+  <input type="text" id="dpText" class="" />
+
+  <script>
+    var dd = jdp('dpText');
+    var d = dd.calendar.today.clone()
+    var d1 = d.clone()
+    var d2 = d.clone()
+  </script>
+</body>
+</html>
