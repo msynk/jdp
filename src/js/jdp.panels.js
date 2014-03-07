@@ -2,16 +2,16 @@
 jdp.panels.createDays = function (dp) {
   var prev = function () {
     dp.viewDate.addMonth(-1);
-    dp.renderDaysPanel();
+    dp.renderDays();
   };
   var center = function () {
     dp.hide();
-    dp.renderMonthsPanel();
+    dp.renderMonths();
     dp.panels.months.show();
   };
   var next = function () {
     dp.viewDate.addMonth(1);
-    dp.renderDaysPanel();
+    dp.renderDays();
   };
   var headerText = dp.calendar.months[dp.viewDate.month - 1] + ' ' + dp.viewDate.year;
   var headerColSpan = dp.calendar.weekLength - 2;
@@ -20,16 +20,16 @@ jdp.panels.createDays = function (dp) {
 jdp.panels.createMonths = function (dp) {
   var prev = function () {
     dp.viewDate.addYear(-1);
-    dp.renderMonthsPanel();
+    dp.renderMonths();
   };
   var center = function () {
     dp.hide();
-    dp.renderYearsPanel();
+    dp.renderYears();
     dp.panels.years.show();
   };
   var next = function () {
     dp.viewDate.addYear(1);
-    dp.renderMonthsPanel();
+    dp.renderMonths();
   };
   var headerText = dp.viewDate.year;
   var headerColSpan = dp.calendar.monthsInRow - 2;
@@ -38,16 +38,16 @@ jdp.panels.createMonths = function (dp) {
 jdp.panels.createYears = function (dp) {
   var prev = function () {
     dp.viewDate.addYear(-10);
-    dp.renderYearsPanel();
+    dp.renderYears();
   };
   var center = function () {
     dp.hide();
-    dp.renderDecadesPanel();
+    dp.renderDecades();
     dp.panels.decades.show();
   };
   var next = function () {
     dp.viewDate.addYear(10);
-    dp.renderYearsPanel();
+    dp.renderYears();
   };
   var startYear = dp.viewDate.year - dp.viewDate.year % 10;
   var headerText = startYear + ' - ' + (startYear + 9);
@@ -57,16 +57,16 @@ jdp.panels.createYears = function (dp) {
 jdp.panels.createDecades = function (dp) {
   var prev = function () {
     dp.viewDate.addYear(-100);
-    dp.renderDecadesPanel();
+    dp.renderDecades();
   };
   var center = function () {
     //dp.hide();
-    //dp.renderDecadesPanel();
+    //dp.renderDecades();
     //dp.panels.decades.show();
   };
   var next = function () {
     dp.viewDate.addYear(100);
-    dp.renderDecadesPanel();
+    dp.renderDecades();
   };
   var startDecade = (dp.viewDate.year - dp.viewDate.year % 100);
   var headerText = startDecade + ' - ' + (startDecade + 99);
@@ -204,8 +204,8 @@ jdp.panels.months.createMonths = function (dp, table) {
       td.month = index + 1;
       td.onclick = function () {
         dp.viewDate.setMonth(this.month);
-        dp.panels.months.style.display = 'none';
-        dp.renderDaysPanel();
+        dp.panels.months.hide();
+        dp.renderDays();
       };
       tr.appendChild(td);
       index++;
@@ -225,8 +225,8 @@ jdp.panels.years.createYears = function (dp, table) {
       td.year = year;
       td.onclick = function () {
         dp.viewDate.setYear(this.year);
-        dp.panels.years.style.display = 'none';
-        dp.renderMonthsPanel();
+        dp.panels.years.hide();
+        dp.renderMonths();
       };
       tr.appendChild(td);
       year++;
@@ -246,8 +246,8 @@ jdp.panels.decades.createDecades = function (dp, table) {
       td.decade = decade;
       td.onclick = function () {
         dp.viewDate.setYear(this.decade);
-        dp.panels.decades.style.display = 'none';
-        dp.renderYearsPanel();
+        dp.panels.decades.hide();
+        dp.renderYears();
       };
       tr.appendChild(td);
       decade += 10;

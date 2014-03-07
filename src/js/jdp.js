@@ -50,7 +50,7 @@ jdp.DatePicker = function (t, opt) {
 
   me.show = function () {
     me.setDates();
-    me.renderDaysPanel();
+    me.renderDays();
     me.hide();
     me.panels.days.show();
   };
@@ -80,27 +80,51 @@ jdp.DatePicker = function (t, opt) {
   })();
 };
 
-jdp.DatePicker.prototype.renderDaysPanel = function () {
+jdp.DatePicker.prototype.renderDays = function () {
   if (this.panels.days) {
     document.body.removeChild(this.panels.days);
   }
   this.panels.days = jdp.panels.createDays(this);
 };
-jdp.DatePicker.prototype.renderMonthsPanel = function () {
+jdp.DatePicker.prototype.renderMonths = function () {
   if (this.panels.months) {
     document.body.removeChild(this.panels.months);
   }
   this.panels.months = jdp.panels.createMonths(this);
 };
-jdp.DatePicker.prototype.renderYearsPanel = function () {
+jdp.DatePicker.prototype.renderYears = function () {
   if (this.panels.years) {
     document.body.removeChild(this.panels.years);
   }
   this.panels.years = jdp.panels.createYears(this);
 };
-jdp.DatePicker.prototype.renderDecadesPanel = function () {
+jdp.DatePicker.prototype.renderDecades = function () {
   if (this.panels.decades) {
     document.body.removeChild(this.panels.decades);
   }
   this.panels.decades = jdp.panels.createDecades(this);
+};
+
+jdp.calendars = {
+  'default': {
+    name: 'gregorian',
+    lang: 'en',
+    title: 'English(Gregorian) Calendar',
+
+    rtl: false,
+    weekDays: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+    months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+    monthDays: [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],
+    monthsInRow: 3,
+
+    isLeapYear: function (year) {
+      return (((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0));
+    },
+    daysInMonth: function (year, month) {
+      if (month === 2 && this.isLeapYear(year)) return 29;
+      return this.monthDays[month - 1];
+    },
+
+    today: [new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate(), new Date().getDay()],
+  }
 };

@@ -58,7 +58,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="js\jdp.Date.js" />
-    <Content Include="js\jdp.calendars.js" />
     <Content Include="js\jdp.js" />
     <Content Include="js\jdp.utils.js" />
     <Content Include="js\calendars\jdp.calendars.persian.js" />
