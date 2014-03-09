@@ -112,10 +112,10 @@ jdp.calendars = {
     title: 'English(Gregorian) Calendar',
 
     rtl: false,
-    weekDays: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-    months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+    weekDays: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'],
+    months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
     monthDays: [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],
-    monthsInRow: 3,
+    monthsInRow: 4,
 
     isLeapYear: function (year) {
       return (((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0));

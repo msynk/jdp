@@ -12,9 +12,9 @@
     return new jdp.Date(this.year, this.month, day, this.cal);
   };
 
-  this.equals = function (date) {
+  this.equals = function(date) {
     return (this.year === date.year && this.month === date.month && this.day === date.day && this.cal == date.cal);
-  }
+  };
 
   
   this.addMonth = function (m) {
@@ -90,7 +90,7 @@
     return this.year + '/' + this.month + '/' + this.day;
   };
 
-  this.parse = function () {
+  this.parse = function (format) {
 
   };
 

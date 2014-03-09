@@ -86,8 +86,8 @@ jdp.panels.create = function (dp, panel, head, middle, body) {
 };
 jdp.panels.createDiv = function (panel, dp) {
   var d = document.createElement('div');
-  d.id = dp.target.id + '_' + panel + 'Panel';
-  d.className = 'jdp jdp-' + panel + 'Panel';
+  d.id = dp.target.id + '_panels_' + panel;
+  d.className = 'jdp jdp-panels-' + panel;
   if (dp.calendar.rtl) {
     d.className += ' jdp-rtl';
   }
@@ -114,7 +114,9 @@ jdp.panels.createHeader = function (funcs, text, colSpan) {
     tdCenter = document.createElement('td'),
     tdNext = document.createElement('td');
 
-  tdPrev.innerHTML = '&lt;';
+  tr.className = 'jdp-panels-header';
+
+  tdPrev.innerHTML = '«';
   tdPrev.onclick = funcs[0];
 
   tdCenter.innerHTML = text;
@@ -122,7 +124,7 @@ jdp.panels.createHeader = function (funcs, text, colSpan) {
   tdCenter.style.direction = 'ltr';
   tdCenter.onclick = funcs[1];
 
-  tdNext.innerHTML = '&gt;';
+  tdNext.innerHTML = '»';
   tdNext.onclick = funcs[2];
 
   tr.appendChild(tdPrev);
@@ -135,6 +137,7 @@ jdp.panels.createHeader = function (funcs, text, colSpan) {
 jdp.panels.days = {};
 jdp.panels.days.createWeekDays = function (dp) {
   var tr = document.createElement('tr');
+  tr.className = 'jdp-panels-weekday';
   for (var i = 0; i < dp.calendar.weekLength; i++) {
     var td = document.createElement('td');
     td.innerHTML = dp.calendar.weekDays[i];
@@ -152,12 +155,18 @@ jdp.panels.days.createDays = function (dp, table) {
         td = document.createElement('td');
       if (day !== '') {
         td.day = day;
+        td.innerHTML = day;
+        td.className = 'day';
         td.onclick = function () {
+          if (dp.selectedCellDay) {
+            dp.selectedCellDay.className = dp.selectedCellDay.className.replace('jdp-selected', '');
+          }
+          this.className = 'jdp-selected ' + this.className;
+          dp.selectedCellDay = this;
           var date = dp.viewDate.get(this.day);
           dp.selectedDate = date;
           dp.target.value = dp.selectedDate.toString();
         };
-        td.innerHTML = day;
 
         var date = dp.viewDate.get(day);
         if (date.equals(dp.calendar.today)) {
@@ -165,6 +174,7 @@ jdp.panels.days.createDays = function (dp, table) {
         }
         if (date.equals(dp.selectedDate)) {
           td.className += ' jdp-selected';
+          dp.selectedCellDay = td;
         }
       }
 
@@ -200,13 +210,28 @@ jdp.panels.months.createMonths = function (dp, table) {
     var tr = document.createElement('tr');
     for (var i = 0; i < dp.calendar.monthsInRow; i++) {
       var td = document.createElement('td');
+      td.className = 'month';
       td.innerHTML = dp.calendar.months[index];
       td.month = index + 1;
       td.onclick = function () {
+        if (dp.selectedCellMoth) {
+          dp.selectedCellMoth.className = dp.selectedCellMoth.className.replace('jdp-selected', '');
+        }
+        this.className = 'jdp-selected ' + this.className;
+        dp.selectedCellMonth = this;
         dp.viewDate.setMonth(this.month);
         dp.panels.months.hide();
         dp.renderDays();
       };
+      
+      if (dp.viewDate.year === dp.calendar.today.year && td.month === dp.calendar.today.month) {
+        td.className += ' jdp-today';
+      }
+      if (dp.viewDate.year === dp.selectedDate.year && td.month === dp.selectedDate.month) {
+        td.className += ' jdp-selected';
+        dp.selectedCellMoth = td;
+      }
+
       tr.appendChild(td);
       index++;
     }
@@ -221,13 +246,28 @@ jdp.panels.years.createYears = function (dp, table) {
     var tr = document.createElement('tr');
     for (var j = 0; j < 3 && year < startYear + 10; j++) {
       var td = document.createElement('td');
+      td.className = 'year';
       td.innerHTML = year;
       td.year = year;
       td.onclick = function () {
+        if (dp.selectedCellYear) {
+          dp.selectedCellYear.className = dp.selectedCellYear.className.replace('jdp-selected', '');
+        }
+        this.className = 'jdp-selected ' + this.className;
+        dp.selectedCellYear = this;
         dp.viewDate.setYear(this.year);
         dp.panels.years.hide();
         dp.renderMonths();
       };
+      
+      if (year === dp.calendar.today.year) {
+        td.className += ' jdp-today';
+      }
+      if (year === dp.selectedDate.year) {
+        td.className += ' jdp-selected';
+        dp.selectedCellYear = td;
+      }
+      
       tr.appendChild(td);
       year++;
     }
@@ -242,13 +282,28 @@ jdp.panels.decades.createDecades = function (dp, table) {
     var tr = document.createElement('tr');
     for (var j = 0; j < 3 && decade < startDecade + 100; j++) {
       var td = document.createElement('td');
+      td.className = 'decade';
       td.innerHTML = decade + ' - ' + (decade + 9);
       td.decade = decade;
       td.onclick = function () {
+        if (dp.selectedCellDecade) {
+          dp.selectedCellDecade.className = dp.selectedCellDecade.className.replace('jdp-selected', '');
+        }
+        this.className = 'jdp-selected ' + this.className;
+        dp.selectedCellDecade = this;
         dp.viewDate.setYear(this.decade);
         dp.panels.decades.hide();
         dp.renderYears();
       };
+      
+      if (decade <= dp.calendar.today.year && dp.calendar.today.year <= decade + 9) {
+        td.className += ' jdp-today';
+      }
+      if (decade <= dp.calendar.today.year && dp.selectedDate.year <= decade + 9) {
+        td.className += ' jdp-selected';
+        dp.selectedCellDecade = td;
+      }
+
       tr.appendChild(td);
       decade += 10;
     }
