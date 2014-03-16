@@ -12,11 +12,11 @@
     return new jdp.Date(this.year, this.month, day, this.cal);
   };
 
-  this.equals = function(date) {
+  this.equals = function (date) {
     return (this.year === date.year && this.month === date.month && this.day === date.day && this.cal == date.cal);
   };
 
-  
+
   this.addMonth = function (m) {
     this.month += m;
     if (this.month < 1) {
@@ -90,11 +90,6 @@
     return this.year + '/' + this.month + '/' + this.day;
   };
 
-  this.parse = function (format) {
-
-  };
-
-
   (function $Init(me) {
 
     me.year = y;
@@ -104,14 +99,12 @@
     if (typeof wc === 'number') {
       me.weekDay = wc;
       me.cal = cal;
-    }
-    else {
+    } else {
       me.cal = wc;
       me.findWeekDay();
     }
 
   })(this);
-
 
 
   // its kinda redundant!
@@ -128,4 +121,8 @@
     }
     this.findWeekDay();
   };
-}
+};
+
+jdp.Date.parse = function (format) {
+
+};
