@@ -82,6 +82,7 @@ jdp.panels.create = function (dp, panel, head, middle, body) {
   body(dp, table);
   div.appendChild(table);
   document.body.appendChild(div);
+  jdp.panels.setLocation(div, dp);
   return div;
 };
 jdp.panels.createDiv = function (panel, dp) {
@@ -91,8 +92,6 @@ jdp.panels.createDiv = function (panel, dp) {
   if (dp.calendar.rtl) {
     d.className += ' jdp-rtl';
   }
-  d.style.top = dp.top;
-  d.style.left = dp.left;
 
   d.show = function () {
     d.style.display = 'block';
@@ -132,7 +131,20 @@ jdp.panels.createHeader = function (funcs, text, colSpan) {
   tr.appendChild(tdNext);
   return tr;
 };
+jdp.panels.setLocation = function (d, dp) {
+  var width = jdp.u.windowSize[0],
+    height = jdp.u.windowSize[1],
+    top = dp.target.offsetTop + dp.target.offsetHeight,
+    left = dp.target.offsetLeft,
+    size = 250;
 
+  if (top > height - 250) {
+
+  }
+
+  d.style.top = top + 'px';
+  d.style.left = left + 'px';
+};
 
 jdp.panels.days = {};
 jdp.panels.days.createWeekDays = function (dp) {
@@ -140,7 +152,7 @@ jdp.panels.days.createWeekDays = function (dp) {
   tr.className = 'jdp-panels-weekday';
   for (var i = 0; i < dp.calendar.weekLength; i++) {
     var td = document.createElement('td');
-    td.innerHTML = dp.calendar.weekDays[i];
+    td.innerHTML = dp.calendar.abbrWeekDays[i];
     tr.appendChild(td);
   }
   return tr;
@@ -165,7 +177,7 @@ jdp.panels.days.createDays = function (dp, table) {
           dp.selectedCellDay = this;
           var date = dp.viewDate.get(this.day);
           dp.selectedDate = date;
-          dp.target.value = dp.selectedDate.toString();
+          dp.target.value = dp.selectedDate.toString(dp.options.format);
         };
 
         var date = dp.viewDate.get(day);

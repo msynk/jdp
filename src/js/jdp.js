@@ -22,6 +22,8 @@ jdp.DatePicker = function (t, opt) {
   me.setDates = function () {
     if (!me.target.value) {
       me.selectedDate = me.calendar.today.clone();
+    } else {
+      me.selectedDate = jdp.Date.parse(me.target.value, me.options.format, me.calendar);
     }
     me.viewDate = me.selectedDate.clone();
   };
@@ -61,8 +63,7 @@ jdp.DatePicker = function (t, opt) {
     if (me.panels.decades) me.panels.decades.hide();
   };
 
-
-  (function $Init() {
+  me.prepareCalendar = function () {
     var oCal = me.options.calendar;
     me.calendar = jdp.u.extend({}, jdp.calendars['default']);
     if (oCal && jdp.calendars[oCal]) {
@@ -71,9 +72,14 @@ jdp.DatePicker = function (t, opt) {
     me.calendar.weekLength = me.calendar.weekDays.length;
     me.calendar.monthNo = me.calendar.months.length;
     me.calendar.today = new jdp.Date(me.calendar.today[0], me.calendar.today[1], me.calendar.today[2], me.calendar.today[3], me.calendar);
+  };
 
-    me.top = me.target.offsetTop + me.target.offsetHeight + 'px';
-    me.left = me.target.offsetLeft + 'px';
+
+  (function $Init() {
+    if (!me.options.format) {
+      me.options.format = jdp.Date.patterns.DefaultPattern;
+    }
+    me.prepareCalendar();
 
     me.setEvents();
     me.panels = {};

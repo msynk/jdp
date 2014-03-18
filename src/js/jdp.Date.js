@@ -87,7 +87,7 @@
   };
 
   this.toString = function (format) {
-    return this.year + '/' + this.month + '/' + this.day;
+    return this._toFormattedString(format);
   };
 
   (function $Init(me) {
@@ -101,6 +101,9 @@
       me.cal = cal;
     } else {
       me.cal = wc;
+      if (me.cal.today instanceof Array) {
+        me.cal.today = new jdp.Date(me.cal.today[0], me.cal.today[1], me.cal.today[2], me.cal.today[3], me.cal);
+      }
       me.findWeekDay();
     }
 
@@ -122,7 +125,296 @@
     this.findWeekDay();
   };
 };
+jdp.Date.prototype._toFormattedString = function (format) {
+  if (!format || !format.length || (format === 'i')) {
+    format = "F";
+  }
+  format = jdp.Date._expandFormat(format);
+  var cal = this.cal,
+    ret = new jdp.u.StringBuilder();
 
-jdp.Date.parse = function (format) {
+  function addLeadingZero(num) {
+    if (num < 10) {
+      return '0' + num;
+    }
+    return num.toString();
+  }
 
+  function padYear(year) {
+    if (year < 10) {
+      return '000' + year;
+    } else if (year < 100) {
+      return '00' + year;
+    } else if (year < 1000) {
+      return '0' + year;
+    }
+    return year.toString();
+  }
+
+  var foundDay;
+  var quoteCount = 0,
+    tokenRegExp = jdp.Date._getTokenRegExp();
+  for (; ;) {
+    var index = tokenRegExp.lastIndex;
+    var ar = tokenRegExp.exec(format);
+    var preMatch = format.slice(index, ar ? ar.index : format.length);
+    quoteCount += jdp.Date._appendPreOrPostMatch(preMatch, ret);
+    if (!ar) break;
+    if ((quoteCount % 2) === 1) {
+      ret.append(ar[0]);
+      continue;
+    }
+
+    function getPart(date, part) {
+      switch (part) {
+        case 0:
+          return date.year;
+        case 1:
+          return date.month;
+        case 2:
+          return date.day;
+        default:
+          return null;
+      }
+    }
+
+    switch (ar[0]) {
+      case "dddd":
+        ret.append(cal.weekDays[this.weekDay - 1]);
+        break;
+      case "ddd":
+        ret.append(cal.abbrWeekDays[this.weekDay - 1]);
+        break;
+      case "dd":
+        foundDay = true;
+        ret.append(addLeadingZero(getPart(this, 2)));
+        break;
+      case "d":
+        foundDay = true;
+        ret.append(getPart(this, 2));
+        break;
+      case "MMMM":
+        ret.append(cal.months[getPart(this, 1)]);
+        break;
+      case "MMM":
+        ret.append(cal.abbrMonths[getPart(this, 1)]);
+        break;
+      case "MM":
+        ret.append(addLeadingZero(getPart(this, 1)));
+        break;
+      case "M":
+        ret.append(getPart(this, 1));
+        break;
+      case "yyyy":
+        ret.append(padYear(this.year));
+        break;
+      case "yy":
+        ret.append(addLeadingZero(this.yeaer % 100));
+        break;
+      case "y":
+        ret.append(this.year % 100);
+        break;
+      case "/":
+        ret.append(cal.separator);
+        break;
+      default:
+        throw "jdp.Date: Invalid date format pattern";
+    }
+  }
+  return ret.toString();
+};
+
+jdp.Date.patterns = {
+  "DefaultPattern": "yyyy/MM/dd",
+  "FullDateTimePattern": "dddd, MMMM dd, yyyy h:mm:ss tt",
+  "LongDatePattern": "dddd, MMMM dd, yyyy",
+  "LongTimePattern": "h:mm:ss tt",
+  "MonthDayPattern": "MMMM dd",
+  "PMDesignator": "PM",
+  "RFC1123Pattern": "ddd, dd MMM yyyy HH\':\'mm\':\'ss \'GMT\'",
+  "ShortDatePattern": "MM/dd/yyyy",
+  "ShortTimePattern": "HH:mm",
+  "SortableDateTimePattern": "yyyy\'-\'MM\'-\'dd\'T\'HH\':\'mm\':\'ss",
+  "TimeSeparator": ":",
+  "UniversalSortableDateTimePattern": "yyyy\'-\'MM\'-\'dd HH\':\'mm\':\'ss\'Z\'",
+  "YearMonthPattern": "yyyy MMMM"
+};
+jdp.Date.parse = function (value, format, cal) {
+  value = value.trim();
+  var parseInfo = jdp.Date._getParseRegExp(format, cal),
+      match = new RegExp(parseInfo.regExp).exec(value);
+  if (match === null) return null;
+
+  var groups = parseInfo.groups,
+      year = null, month = null, day = null;
+  for (var j = 0, jl = groups.length; j < jl; j++) {
+    var matchGroup = match[j + 1];
+    if (!matchGroup) continue;
+
+    switch (groups[j]) {
+      case 'dd':
+      case 'd':
+        day = parseInt(matchGroup, 10);
+        if ((day < 1) || (day > 31)) return null;
+        break;
+      case 'MMMM':
+        month = matchGroup;
+        break;
+      case 'MMM':
+        month = matchGroup;
+        break;
+      case 'M':
+      case 'MM':
+        month = parseInt(matchGroup, 10);
+        break;
+      case 'y':
+      case 'yy':
+        year = matchGroup;
+        break;
+      case 'yyyy':
+        year = parseInt(matchGroup, 10);
+        break;
+    }
+  }
+  return new jdp.Date(year, month, day, cal);
+};
+jdp.Date._getParseRegExp = function (format, cal) {
+  var expFormat = jdp.Date._expandFormat(format);
+  expFormat = expFormat.replace(/([\^\$\.\*\+\?\|\[\]\(\)\{\}])/g, "\\\\$1");
+  var regexp = new jdp.u.StringBuilder("^"),
+    groups = [],
+    index = 0,
+    quoteCount = 0,
+    tokenRegExp = jdp.Date._getTokenRegExp(),
+    match;
+  while ((match = tokenRegExp.exec(expFormat)) !== null) {
+    var preMatch = expFormat.slice(index, match.index);
+    index = tokenRegExp.lastIndex;
+    quoteCount += jdp.Date._appendPreOrPostMatch(preMatch, regexp);
+    if ((quoteCount % 2) === 1) {
+      regexp.append(match[0]);
+      continue;
+    }
+    switch (match[0]) {
+      case 'dddd':
+      case 'ddd':
+      case 'MMMM':
+      case 'MMM':
+      case 'gg':
+      case 'g':
+        regexp.append("(\\D+)");
+        break;
+      case 'tt':
+      case 't':
+        regexp.append("(\\D*)");
+        break;
+      case 'yyyy':
+        regexp.append("(\\d{4})");
+        break;
+      case 'fff':
+        regexp.append("(\\d{3})");
+        break;
+      case 'ff':
+        regexp.append("(\\d{2})");
+        break;
+      case 'f':
+        regexp.append("(\\d)");
+        break;
+      case 'dd':
+      case 'd':
+      case 'MM':
+      case 'M':
+      case 'yy':
+      case 'y':
+      case 'HH':
+      case 'H':
+      case 'hh':
+      case 'h':
+      case 'mm':
+      case 'm':
+      case 'ss':
+      case 's':
+        regexp.append("(\\d\\d?)");
+        break;
+      case 'zzz':
+        regexp.append("([+-]?\\d\\d?:\\d{2})");
+        break;
+      case 'zz':
+      case 'z':
+        regexp.append("([+-]?\\d\\d?)");
+        break;
+      case '/':
+        regexp.append("(\\" + cal.separator + ")");
+        break;
+      default:
+        throw "Invalid date format pattern";
+    }
+    groups[groups.length] = match[0];
+  }
+  jdp.Date._appendPreOrPostMatch(expFormat.slice(index), regexp);
+  regexp.append("$");
+  var regexpStr = regexp.toString().replace(/\s+/g, "\\s+");
+  var parseRegExp = { 'regExp': regexpStr, 'groups': groups };
+  return parseRegExp;
+};
+jdp.Date._expandFormat = function (format) {
+  if (!format) {
+    format = "F";
+  }
+  var len = format.length;
+  if (len === 1) {
+    switch (format) {
+      case "d":
+        return jdp.Date.patterns.ShortDatePattern;
+      case "D":
+        return jdp.Date.patterns.LongDatePattern;
+      case "t":
+        return jdp.Date.patterns.ShortTimePattern;
+      case "T":
+        return jdp.Date.patterns.LongTimePattern;
+      case "f":
+        return jdp.Date.patterns.LongDatePattern + " " + jdp.Date.patterns.ShortTimePattern;
+      case "F":
+        return jdp.Date.patterns.FullDateTimePattern;
+      case "M":
+      case "m":
+        return jdp.Date.patterns.MonthDayPattern;
+      case "s":
+        return jdp.Date.patterns.SortableDateTimePattern;
+      case "Y":
+      case "y":
+        return jdp.Date.patterns.YearMonthPattern;
+      default:
+        throw "jdp.Date: Invalid format String.";
+    }
+  } else if ((len === 2) && (format.charAt(0) === "%")) {
+    format = format.charAt(1);
+  }
+  return format;
+};
+jdp.Date._getTokenRegExp = function () {
+  return /\/|dddd|ddd|dd|d|MMMM|MMM|MM|M|yyyy|yy|y|hh|h|HH|H|mm|m|ss|s|tt|t|fff|ff|f|zzz|zz|z|gg|g/g;
+};
+jdp.Date._appendPreOrPostMatch = function (preMatch, strBuilder) {
+  var quoteCount = 0;
+  var escaped = false;
+  for (var i = 0, il = preMatch.length; i < il; i++) {
+    var c = preMatch.charAt(i);
+    switch (c) {
+      case '\'':
+        if (escaped) strBuilder.append("'");
+        else quoteCount++;
+        escaped = false;
+        break;
+      case '\\':
+        if (escaped) strBuilder.append("\\");
+        escaped = !escaped;
+        break;
+      default:
+        strBuilder.append(c);
+        escaped = false;
+        break;
+    }
+  }
+  return quoteCount;
 };
