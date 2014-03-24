@@ -36,12 +36,14 @@ jdp.DatePicker = function (t, opt) {
 
     document.onmousedown = function (e) {
       e = e || window.event;
-      var target = e.target;
+      var target = e.target || e.srcElement;
+      
       var isValidTarget = function (tar) {
-        return tar == me.panels.days || tar == me.panels.months || tar == me.panels.years || tar == me.panels.decades;
+        return tar === me.panels.days || tar === me.panels.months || tar === me.panels.years || tar === me.panels.decades;
       };
-      if (target == me.target || isValidTarget(target)) return;
 
+      //alert(target.parentNode);
+      if (target === me.target || isValidTarget(target)) return;
       while (target.parentNode) {
         if (isValidTarget(target.parentNode)) return;
         target = target.parentNode;
@@ -52,9 +54,8 @@ jdp.DatePicker = function (t, opt) {
 
   me.show = function () {
     me.setDates();
-    me.renderDays();
     me.hide();
-    me.panels.days.show();
+    me.renderDays();
   };
   me.hide = function () {
     if (me.panels.days) me.panels.days.hide();
@@ -91,24 +92,28 @@ jdp.DatePicker.prototype.renderDays = function () {
     document.body.removeChild(this.panels.days);
   }
   this.panels.days = jdp.panels.createDays(this);
+  this.panels.days.show();
 };
 jdp.DatePicker.prototype.renderMonths = function () {
   if (this.panels.months) {
     document.body.removeChild(this.panels.months);
   }
   this.panels.months = jdp.panels.createMonths(this);
+  this.panels.months.show();
 };
 jdp.DatePicker.prototype.renderYears = function () {
   if (this.panels.years) {
     document.body.removeChild(this.panels.years);
   }
   this.panels.years = jdp.panels.createYears(this);
+  this.panels.years.show();
 };
 jdp.DatePicker.prototype.renderDecades = function () {
   if (this.panels.decades) {
     document.body.removeChild(this.panels.decades);
   }
   this.panels.decades = jdp.panels.createDecades(this);
+  this.panels.decades.show();
 };
 
 jdp.calendars = {
@@ -118,10 +123,13 @@ jdp.calendars = {
     title: 'English(Gregorian) Calendar',
 
     rtl: false,
-    weekDays: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'],
-    months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+    weekDays: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+    abbrWeekDays: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+    months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+    abbrMonths: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
     monthDays: [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],
     monthsInRow: 4,
+    separator: '/',
 
     isLeapYear: function (year) {
       return (((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0));
@@ -131,6 +139,6 @@ jdp.calendars = {
       return this.monthDays[month - 1];
     },
 
-    today: [new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate(), new Date().getDay()],
+    today: [new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate(), new Date().getDay()]
   }
 };

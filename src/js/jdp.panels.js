@@ -14,7 +14,7 @@ jdp.panels.createDays = function (dp) {
     dp.renderDays();
   };
   var headerText = dp.calendar.months[dp.viewDate.month - 1] + ' ' + dp.viewDate.year;
-  var headerColSpan = dp.calendar.weekLength - 2;
+  var headerColSpan = dp.calendar.weekLength;
   return jdp.panels.create(dp, 'days', [[prev, center, next], headerText, headerColSpan], jdp.panels.days.createWeekDays, jdp.panels.days.createDays);
 };
 jdp.panels.createMonths = function (dp) {
@@ -32,7 +32,7 @@ jdp.panels.createMonths = function (dp) {
     dp.renderMonths();
   };
   var headerText = dp.viewDate.year;
-  var headerColSpan = dp.calendar.monthsInRow - 2;
+  var headerColSpan = dp.calendar.monthsInRow;
   return jdp.panels.create(dp, 'months', [[prev, center, next], headerText, headerColSpan], null, jdp.panels.months.createMonths);
 };
 jdp.panels.createYears = function (dp) {
@@ -51,8 +51,8 @@ jdp.panels.createYears = function (dp) {
   };
   var startYear = dp.viewDate.year - dp.viewDate.year % 10;
   var headerText = startYear + ' - ' + (startYear + 9);
-  var headerColSpan = 1;
-  return jdp.panels.create(dp, 'months', [[prev, center, next], headerText, headerColSpan], null, jdp.panels.years.createYears);
+  var headerColSpan = 4;
+  return jdp.panels.create(dp, 'years', [[prev, center, next], headerText, headerColSpan], null, jdp.panels.years.createYears);
 };
 jdp.panels.createDecades = function (dp) {
   var prev = function () {
@@ -70,8 +70,8 @@ jdp.panels.createDecades = function (dp) {
   };
   var startDecade = (dp.viewDate.year - dp.viewDate.year % 100);
   var headerText = startDecade + ' - ' + (startDecade + 99);
-  var headerColSpan = 1;
-  return jdp.panels.create(dp, 'months', [[prev, center, next], headerText, headerColSpan], null, jdp.panels.decades.createDecades);
+  var headerColSpan = 4;
+  return jdp.panels.create(dp, 'decades', [[prev, center, next], headerText, headerColSpan], null, jdp.panels.decades.createDecades);
 };
 
 jdp.panels.create = function (dp, panel, head, middle, body) {
@@ -82,7 +82,6 @@ jdp.panels.create = function (dp, panel, head, middle, body) {
   body(dp, table);
   div.appendChild(table);
   document.body.appendChild(div);
-  jdp.panels.setLocation(div, dp);
   return div;
 };
 jdp.panels.createDiv = function (panel, dp) {
@@ -95,6 +94,7 @@ jdp.panels.createDiv = function (panel, dp) {
 
   d.show = function () {
     d.style.display = 'block';
+    jdp.panels.setLocation(d, dp);
   };
 
   d.hide = function () {
@@ -108,42 +108,85 @@ jdp.panels.createTable = function () {
   return table;
 };
 jdp.panels.createHeader = function (funcs, text, colSpan) {
-  var tr = document.createElement('tr'),
+  var mainTr = document.createElement('tr'),
+    mainTd = document.createElement('td'),
+    table = document.createElement('table'),
+    tr = document.createElement('tr'),
     tdPrev = document.createElement('td'),
     tdCenter = document.createElement('td'),
     tdNext = document.createElement('td');
 
-  tr.className = 'jdp-panels-header';
-
   tdPrev.innerHTML = '«';
+  tdPrev.className = 'prev';
   tdPrev.onclick = funcs[0];
 
   tdCenter.innerHTML = text;
-  tdCenter.colSpan = colSpan;
+  tdCenter.className = 'center';
   tdCenter.style.direction = 'ltr';
   tdCenter.onclick = funcs[1];
 
   tdNext.innerHTML = '»';
+  tdNext.className = 'next';
   tdNext.onclick = funcs[2];
 
   tr.appendChild(tdPrev);
   tr.appendChild(tdCenter);
   tr.appendChild(tdNext);
-  return tr;
+  tr.className = 'jdp-panels-header';
+
+  table.appendChild(tr);
+  mainTd.colSpan = colSpan;
+  mainTd.style.padding = 0;
+  mainTd.appendChild(table);
+  mainTr.appendChild(mainTd);
+
+  return mainTr;
 };
-jdp.panels.setLocation = function (d, dp) {
-  var width = jdp.u.windowSize[0],
-    height = jdp.u.windowSize[1],
-    top = dp.target.offsetTop + dp.target.offsetHeight,
-    left = dp.target.offsetLeft,
-    size = 250;
+jdp.panels.setLocation = function (div, dp) {
+  var scrollTop = document.body.scrollTop,
+    wSize = jdp.u.getWindowSize(),
+    windowSize = {
+      width: wSize[0],
+      height: wSize[1]
+    },
+    target = {
+      top: dp.target.offsetTop,
+      left: dp.target.offsetLeft,
+      height: dp.target.offsetHeight,
+      width: dp.target.offsetWidth
+    },
+    panel = {
+      width: div.offsetWidth,
+      height: div.offsetHeight
+    },
+    top = target.top,
+    left = target.left;
 
-  if (top > height - 250) {
-
+  if (dp.calendar.rtl === true) {
+    left -= panel.width - target.width;
+    if (left > windowSize.width) {
+      left -= left - windowSize.width;
+    } else if (left < 0) {
+      left = 0;
+    }
+  } else {
+    if (target.left < 0) {
+      left -= target.left;
+    } else if (target.left + panel.width > windowSize.width) {
+      left = windowSize.width - panel.width;
+    }
   }
 
-  d.style.top = top + 'px';
-  d.style.left = left + 'px';
+  var topOverflow = -scrollTop + target.top - panel.height;
+  var bottomOverflow = scrollTop + windowSize.height - (target.top + target.height + panel.height);
+  if (Math.max(topOverflow, bottomOverflow) === bottomOverflow) {
+    top += target.height;
+  } else {
+    top -= panel.height;
+  }
+
+  div.style.top = top + 'px';
+  div.style.left = left + 'px';
 };
 
 jdp.panels.days = {};
@@ -223,25 +266,19 @@ jdp.panels.months.createMonths = function (dp, table) {
     for (var i = 0; i < dp.calendar.monthsInRow; i++) {
       var td = document.createElement('td');
       td.className = 'month';
-      td.innerHTML = dp.calendar.months[index];
+      td.innerHTML = dp.calendar.abbrMonths[index];
       td.month = index + 1;
       td.onclick = function () {
-        //if (dp.selectedCellMoth) {
-        //  dp.selectedCellMoth.className = dp.selectedCellMoth.className.replace('jdp-selected', '');
-        //}
-        //this.className = 'jdp-selected ' + this.className;
-        //dp.selectedCellMonth = this;
         dp.viewDate.setMonth(this.month);
         dp.panels.months.hide();
         dp.renderDays();
       };
-      
+
       if (dp.viewDate.year === dp.calendar.today.year && td.month === dp.calendar.today.month) {
         td.className += ' jdp-today';
       }
       if (dp.viewDate.year === dp.selectedDate.year && td.month === dp.selectedDate.month) {
         td.className += ' jdp-selected';
-        //dp.selectedCellMoth = td;
       }
 
       tr.appendChild(td);
@@ -254,71 +291,80 @@ jdp.panels.months.createMonths = function (dp, table) {
 jdp.panels.years = {};
 jdp.panels.years.createYears = function (dp, table) {
   var startYear = dp.viewDate.year - dp.viewDate.year % 10;
-  for (var year = startYear; year < startYear + 10;) {
+  var endYear = startYear + 10;
+  for (var year = startYear; year < endYear;) {
     var tr = document.createElement('tr');
-    for (var j = 0; j < 3 && year < startYear + 10; j++) {
-      var td = document.createElement('td');
-      td.className = 'year';
-      td.innerHTML = year;
-      td.year = year;
-      td.onclick = function () {
-        //if (dp.selectedCellYear) {
-        //  dp.selectedCellYear.className = dp.selectedCellYear.className.replace('jdp-selected', '');
-        //}
-        //this.className = 'jdp-selected ' + this.className;
-        //dp.selectedCellYear = this;
-        dp.viewDate.setYear(this.year);
-        dp.panels.years.hide();
-        dp.renderMonths();
-      };
-      
-      if (year === dp.calendar.today.year) {
-        td.className += ' jdp-today';
+    for (var j = 0; j < 4 && year < endYear; j++) {
+      if (year === startYear) {
+        tr.appendChild(jdp.panels.years.createTd(year - 1, 'year disabled', dp));
+        j++;
       }
-      if (year === dp.selectedDate.year) {
-        td.className += ' jdp-selected';
-        //dp.selectedCellYear = td;
-      }
-      
-      tr.appendChild(td);
+      tr.appendChild(jdp.panels.years.createTd(year, 'year', dp));
       year++;
+    }
+    if (year === endYear) {
+      tr.appendChild(jdp.panels.years.createTd(year, 'year disabled', dp));
     }
     table.appendChild(tr);
   }
+};
+jdp.panels.years.createTd = function (year, cls, dp) {
+  var td = document.createElement('td');
+  td.innerHTML = year;
+  td.year = year;
+  td.className = cls;
+  td.onclick = function () {
+    dp.viewDate.setYear(this.year);
+    dp.panels.years.hide();
+    dp.renderMonths();
+  };
+
+  if (year === dp.calendar.today.year) {
+    td.className += ' jdp-today';
+  }
+  if (year === dp.selectedDate.year) {
+    td.className += ' jdp-selected';
+  }
+  return td;
 };
 
 jdp.panels.decades = {};
 jdp.panels.decades.createDecades = function (dp, table) {
   var startDecade = (dp.viewDate.year - dp.viewDate.year % 100);
-  for (var decade = startDecade; decade < startDecade + 100;) {
+  var endDecade = startDecade + 100;
+  for (var decade = startDecade; decade < endDecade;) {
     var tr = document.createElement('tr');
-    for (var j = 0; j < 3 && decade < startDecade + 100; j++) {
-      var td = document.createElement('td');
-      td.className = 'decade';
-      td.innerHTML = decade + ' - ' + (decade + 9);
-      td.decade = decade;
-      td.onclick = function () {
-        //if (dp.selectedCellDecade) {
-        //  dp.selectedCellDecade.className = dp.selectedCellDecade.className.replace('jdp-selected', '');
-        //}
-        //this.className = 'jdp-selected ' + this.className;
-        //dp.selectedCellDecade = this;
-        dp.viewDate.setYear(this.decade);
-        dp.panels.decades.hide();
-        dp.renderYears();
-      };
-      
-      if (decade <= dp.calendar.today.year && dp.calendar.today.year <= decade + 9) {
-        td.className += ' jdp-today';
-      }
-      if (decade <= dp.selectedDate.year && dp.selectedDate.year <= decade + 9) {
-        td.className += ' jdp-selected';
-        //dp.selectedCellDecade = td;
+    for (var j = 0; j < 4 && decade < endDecade; j++) {
+      if (decade === startDecade) {
+        tr.appendChild(jdp.panels.decades.createTd(decade - 10, 'decade disabled', dp));
+        j++;
       }
 
-      tr.appendChild(td);
+      tr.appendChild(jdp.panels.decades.createTd(decade, 'decade', dp));
       decade += 10;
+    }
+    if (decade === endDecade) {
+      tr.appendChild(jdp.panels.decades.createTd(decade, 'decade disabled', dp));
     }
     table.appendChild(tr);
   }
+};
+jdp.panels.decades.createTd = function (decade, cls, dp) {
+  var td = document.createElement('td');
+  td.innerHTML = decade + '-' + (decade + 9);
+  td.decade = decade;
+  td.className = cls;
+  td.onclick = function () {
+    dp.viewDate.setYear(this.decade);
+    dp.panels.decades.hide();
+    dp.renderYears();
+  };
+
+  if (decade <= dp.calendar.today.year && dp.calendar.today.year <= decade + 9) {
+    td.className += ' jdp-today';
+  }
+  if (decade <= dp.selectedDate.year && dp.selectedDate.year <= decade + 9) {
+    td.className += ' jdp-selected';
+  }
+  return td;
 };

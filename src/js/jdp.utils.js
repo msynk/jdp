@@ -72,6 +72,10 @@
       return val[separator];
     };
   },
-  windowSize: [window.innerWidth || document.documentElement.clientWidth || document.getElementsByTagName('body')[0].clientWidth,
-               window.innerHeight || document.documentElement.clientHeight || document.getElementsByTagName('body')[0].clientHeight],
+  getWindowSize: function() {
+    return [
+      window.innerWidth || (document.documentElement ? document.documentElement.clientWidth : 0) || (document.getElementsByTagName('body')[0] ? document.getElementsByTagName('body')[0].clientWidth : 0),
+      window.innerHeight || (document.documentElement ? document.documentElement.clientHeight : 0) || (document.getElementsByTagName('body')[0] ? document.getElementsByTagName('body')[0].clientHeight : 0)
+    ];
+  }
 };

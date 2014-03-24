@@ -240,7 +240,11 @@ jdp.Date.patterns = {
   "YearMonthPattern": "yyyy MMMM"
 };
 jdp.Date.parse = function (value, format, cal) {
-  value = value.trim();
+  if (value.trim) {
+    value = value.trim();
+  } else {
+    value = value.replace(/^\s+|\s+$/gm, '');
+  }
   var parseInfo = jdp.Date._getParseRegExp(format, cal),
       match = new RegExp(parseInfo.regExp).exec(value);
   if (match === null) return null;

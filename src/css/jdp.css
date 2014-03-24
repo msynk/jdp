@@ -2,7 +2,7 @@
   position: absolute;
   z-index: 99;
   background-color: #ffffff;
-  border: 1px solid #000000;
+  border: 1px solid #ccc;
   border: 1px solid rgba(0, 0, 0, 0.2);
   -ms-border-radius: 5px;
   border-radius: 5px;
@@ -18,29 +18,51 @@
 
   .jdp table {
     margin: 3px;
+    border-spacing: 0;
   }
 
     .jdp table tr td {
-      padding: 0;
+      vertical-align: middle;
+      padding: 0 5px;
       text-align: center;
-      width: 30px;
+      width: 20px;
       height: 30px;
       -ms-border-radius: 4px;
       border-radius: 4px;
       border: none;
     }
-    .jdp table tr td.month {
-      width: 50px;
-      height: 50px;
-    }
-    .jdp table tr td.year {
-      width: 75px;
-      height: 50px;
-    }
-    .jdp table tr td.decade {
-      width: 100px;
-      height: 50px;
-    }
+
+      .jdp table tr td.prev {
+        width: 30px;
+      }
+
+      .jdp table tr td.center {
+        width: 150px;
+      }
+
+      .jdp table tr td.next {
+        width: 30px;
+      }
+
+      .jdp table tr td.month {
+        width: 43px;
+        height: 50px;
+        padding: 5px;
+      }
+
+      .jdp table tr td.year {
+        width: 43px;
+        height: 50px;
+      }
+
+      .jdp table tr td.decade {
+        width: 43px;
+        height: 50px;
+      }
+
+      .jdp table tr td.disabled {
+        color: #999999;
+      }
 
       .jdp table tr td.day:hover,
       .jdp table tr td.month:hover,
