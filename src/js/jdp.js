@@ -17,6 +17,7 @@ jdp.DatePicker = function (t, opt) {
   if (!me.target) {
     throw 'invalid target';
   }
+  me.target.setAttribute("autocomplete", "off");
   me.options = opt || {};
 
   me.setDates = function () {

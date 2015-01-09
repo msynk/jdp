@@ -149,9 +149,24 @@ jdp.panels.setLocation = function (div, dp) {
       width: wSize[0],
       height: wSize[1]
     },
+    //target = {
+    //  top: dp.target.offsetTop,
+    //  left: dp.target.offsetLeft,
+    //  height: dp.target.offsetHeight,
+    //  width: dp.target.offsetWidth
+    //},
+    //-------------------------------------
+    //rect = dp.target.getBoundingClientRect(),
+    //target = {
+    //  top: rect.top,
+    //  left: rect.left,
+    //  height: rect.height,
+    //  width: rect.width
+    //},
+    elOffset = jdp.u.getOffset(dp.target),
     target = {
-      top: dp.target.offsetTop,
-      left: dp.target.offsetLeft,
+      top: elOffset.top,
+      left: elOffset.left,
       height: dp.target.offsetHeight,
       width: dp.target.offsetWidth
     },

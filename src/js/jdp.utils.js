@@ -77,5 +77,15 @@
       window.innerWidth || (document.documentElement ? document.documentElement.clientWidth : 0) || (document.getElementsByTagName('body')[0] ? document.getElementsByTagName('body')[0].clientWidth : 0),
       window.innerHeight || (document.documentElement ? document.documentElement.clientHeight : 0) || (document.getElementsByTagName('body')[0] ? document.getElementsByTagName('body')[0].clientHeight : 0)
     ];
+  },
+  getOffset: function (el) {
+    var left = 0;
+    var top = 0;
+    while (el && !isNaN(el.offsetLeft) && !isNaN(el.offsetTop)) {
+      left += el.offsetLeft;// - el.scrollLeft;
+      top += el.offsetTop;// - el.scrollTop;
+      el = el.offsetParent;
+    }
+    return { top: top, left: left };
   }
 };
